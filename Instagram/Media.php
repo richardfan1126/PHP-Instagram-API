@@ -247,6 +247,16 @@ class Media extends \Instagram\Core\BaseObjectAbstract {
     public function getLikesCount() {
         return (int)$this->data->likes->count;
     }
+    
+    /**
+     * Get the media's comments count
+     *
+     * @return int
+     * @access public
+     */
+    public function getCommentsCount() {
+        return (int)$this->data->comments->count;
+    }
 
     /**
      * Get media likes
