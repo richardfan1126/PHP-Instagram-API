@@ -43,6 +43,14 @@ class Proxy {
     protected $client_id = null;
 
     /**
+     * Client Secret
+     *
+     * @var string
+     * @access protected
+     */
+    protected $client_secret = null;
+
+    /**
      * API URL
      * 
      * @var string
@@ -95,6 +103,16 @@ class Proxy {
      */
     public function setClientID( $client_id ) {
         $this->client_id = $client_id;
+    }
+
+    /**
+     * Set the client Secret
+     * 
+     * @param string $client_secret the client Secret
+     * @access public
+     */
+    public function setClientSecret( $client_secret ) {
+        $this->client_secret = $client_secret;
     }
 
     /**
@@ -533,6 +551,9 @@ class Proxy {
      * @access private
      */
     private function apiCall( $method, $url, array $params = null, $throw_exception = true ){
+        $sig = $this->generate_sig($url, $params);
+        
+        $params['sig'] = $sig;
 
         $raw_response = $this->client->$method(
             $url,
@@ -560,5 +581,24 @@ class Proxy {
         return $response;
     }
 
+    
+    private function generate_sig($url, $params) {
+        $endpoint = substr($url, strlen($this->api_url));
+        $secret = $this->client_secret;
+        
+        $sig = $endpoint;
+        
+        if(!isset($params)){
+            $params = [];
+        }
+        
+        $params['access_token'] = $this->access_token;
+        
+        ksort($params);
+        foreach ($params as $key => $val) {
+            $sig .= "|$key=$val";
+        }
+        return hash_hmac('sha256', $sig, $secret, false);
+    }
 
 }
