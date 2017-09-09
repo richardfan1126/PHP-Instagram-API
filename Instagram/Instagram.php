@@ -65,6 +65,18 @@ class Instagram extends \Instagram\Core\BaseObjectAbstract {
     }
 
     /**
+     * Set the client Secret
+     *
+     * Some API calls can be called with only a Client Secret
+     * 
+     * @param string $client_secret Client Secret
+     * @access public
+     */
+    public function setClientSecret( $client_secret ) {
+        $this->proxy->setClientSecret( $client_secret );
+    }
+
+    /**
      * Logout
      *
      * This doesn't actually work yet, waiting for Instagram to implement it in their API
