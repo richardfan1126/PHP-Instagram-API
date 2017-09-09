@@ -80,7 +80,9 @@ class Proxy {
         $response = $this->apiCall(
             'post',
             'https://api.instagram.com/oauth/access_token',
-            $data
+            $data,
+            true,
+            false
         );
         return $response;
     }
@@ -550,10 +552,11 @@ class Proxy {
      * @return  \Instagram\Net\ApiResponse Returns teh API response
      * @access private
      */
-    private function apiCall( $method, $url, array $params = null, $throw_exception = true ){
-        $sig = $this->generate_sig($url, $params);
-        
-        $params['sig'] = $sig;
+    private function apiCall( $method, $url, array $params = null, $throw_exception = true, $need_sig = true ){
+        if($need_sig){
+            $sig = $this->generate_sig($url, $params);
+            $params['sig'] = $sig;
+        }
 
         $raw_response = $this->client->$method(
             $url,
